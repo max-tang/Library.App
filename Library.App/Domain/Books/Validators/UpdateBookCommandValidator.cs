@@ -14,4 +14,3 @@ namespace Library.App.Books
         }
     }
 }
-

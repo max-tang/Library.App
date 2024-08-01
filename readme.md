@@ -1,4 +1,4 @@
-# Prerequests for building and running the application locally
+# Prerequisite for building and running the application locally
 
 1. .NET 6 installed
 
