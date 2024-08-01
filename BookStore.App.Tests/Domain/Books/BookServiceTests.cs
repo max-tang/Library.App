@@ -1,4 +1,6 @@
 
+using FluentValidation;
+
 namespace BookStore.App.Books
 {
     public class BookServiceTests
@@ -94,7 +96,7 @@ namespace BookStore.App.Books
             Func<Task> action = () => service.AddAcync(GetCreateBookCommand(SharedTestData.BadIsbn()));
 
             // Assert
-            await Assert.ThrowsAsync<BadArgumentException>(action);
+            await Assert.ThrowsAsync<ValidationException>(action);
             mockBookRepository.Verify(r => r.AddAsync(It.IsAny<Book>()), Times.Never);
         }
 
@@ -182,7 +184,7 @@ namespace BookStore.App.Books
             Func<Task> action = () => service.UpdateAcync(command);
 
             // Assert
-            await Assert.ThrowsAsync<BadArgumentException>(action);
+            await Assert.ThrowsAsync<ValidationException>(action);
             mockBookRepository.Verify(r => r.UpdateAsync(It.IsAny<Book>()), Times.Never);
         }
 
