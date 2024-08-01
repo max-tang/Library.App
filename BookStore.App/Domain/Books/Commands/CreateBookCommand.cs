@@ -9,13 +9,10 @@ namespace BookStore.App.Books
     /// </summary>
     public class CreateBookCommand
     {
-        [Required]
         public string Isbn { get; set; }
 
-        [Required]
         public string Title { get; set; }
 
-        [Required]
         public string Author { get; set; }
 
         [JsonConverter(typeof(DateOnlyJsonConverter))]

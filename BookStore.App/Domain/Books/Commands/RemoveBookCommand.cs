@@ -7,7 +7,6 @@ namespace BookStore.App.Books
     /// </summary>
     public class RemoveBookCommand
     {
-        [Required]
         public long Id { get; set; }
     }
 }

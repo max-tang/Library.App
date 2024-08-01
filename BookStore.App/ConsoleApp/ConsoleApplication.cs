@@ -61,8 +61,13 @@ namespace BookStore.App.ConsoleApp
                             {
                                 await userCommandProcesser.ProcessUserInput(input);
                             }
+                            catch (FluentValidation.ValidationException validationException)
+                            {
+                                Console.WriteLine(validationException.Message);
+                            }
                             catch (Exception e)
                             {
+                                Console.WriteLine("Oops, something went wrong!");
                                 _logger.LogError(e, "Failed to process user command");
                             }
                         }

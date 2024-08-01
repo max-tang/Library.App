@@ -12,6 +12,7 @@ namespace BookStore.App.Books
         /// </summary>
         /// <param name="createBookCommand"></param>
         /// <returns>The <c>Book</c> entity if created successfully.</returns>
+        /// <exception cref="FluentValidation.ValidationException">If input is invalid</exception>
         Task<Book> AddAcync(CreateBookCommand createBookCommand);
 
         /// <summary>
@@ -19,6 +20,7 @@ namespace BookStore.App.Books
         /// </summary>
         /// <param name="updateBookCommand"></param>
         /// <returns>The updated <c>Book</c> entity.</returns>
+        /// <exception cref="FluentValidation.ValidationException">If input is invalid</exception>
         /// <exception cref="NotFoundException">If book not found with provided Id.</exception>
         Task<Book> UpdateAcync(UpdateBookCommand updateBookCommand);
 

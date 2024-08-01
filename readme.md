@@ -22,6 +22,8 @@ General format of supported commands is `COMMAND_KEY [BODY]`. COMMAND_KEY is cas
 # Add a new book
 ADD  {"Isbn":"0-061-96436-0","Title":"Big event","Author":"John Doe","PublishDate":"2024-01-20","Description":"A brief of the book"}
 
+ADD {"Isbn":"0-061-96436-1","Title":"Big event","Author":"John Doe"}
+
 # print out existing books
 LIST
 

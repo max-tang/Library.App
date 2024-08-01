@@ -1,4 +1,5 @@
 
+using FluentValidation;
 using Microsoft.Extensions.Logging;
 
 namespace BookStore.App.Books
@@ -16,6 +17,9 @@ namespace BookStore.App.Books
 
         public async Task<Book> AddAcync(CreateBookCommand createBookCommand)
         {
+            CreateBookCommandValidator validator = new CreateBookCommandValidator();
+            validator.ValidateAndThrow(createBookCommand);
+
             if (!IsbnValidator.IsValid(createBookCommand.Isbn))
             {
                 throw new BadArgumentException("Invalid ISBN number");
@@ -58,6 +62,9 @@ namespace BookStore.App.Books
 
         public async Task<Book> UpdateAcync(UpdateBookCommand updateBookCommand)
         {
+            UpdateBookCommandValidator validator = new UpdateBookCommandValidator();
+            validator.ValidateAndThrow(updateBookCommand);
+
             if (!IsbnValidator.IsValid(updateBookCommand.Isbn))
             {
                 throw new BadArgumentException("Invalid ISBN number");
