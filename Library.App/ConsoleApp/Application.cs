@@ -49,7 +49,7 @@ namespace Library.App.ConsoleApp
 
                     using IServiceScope scope = _serviceProvider.CreateScope();
                     {
-                        IUserCommandProcessor userCommandProcesser = CreateProcessorFor(scope, commandKey);
+                        IUserCommandProcessor userCommandProcesser = CreateProcessorFor(commandKey, scope);
 
                         if (userCommandProcesser == null)
                         {
@@ -76,12 +76,12 @@ namespace Library.App.ConsoleApp
             }
         }
 
-        private IUserCommandProcessor CreateProcessorFor(IServiceScope scope, string key)
+        private IUserCommandProcessor CreateProcessorFor(string commandKey, IServiceScope scope)
         {
-            _logger.LogInformation($"Creating processor for {key}");
-            if (_registeredProcessors.ContainsKey(key))
+            _logger.LogInformation($"Creating processor for {commandKey}");
+            if (_registeredProcessors.ContainsKey(commandKey))
             {
-                Type type = _registeredProcessors[key];
+                Type type = _registeredProcessors[commandKey];
                 try
                 {
                     IUserCommandProcessor userCommandProcessor = scope.ServiceProvider.GetRequiredService(type) as IUserCommandProcessor;
@@ -90,7 +90,7 @@ namespace Library.App.ConsoleApp
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, $"Failed to create command processor for {key}");
+                    _logger.LogError(e, $"Failed to create command processor for {commandKey}");
                 }
             }
             return null;
