@@ -7,8 +7,6 @@ namespace BookStore.App.ConsoleApp
     {
         private const string EXIT_COMMAND = "exit";
 
-        private readonly IList<IUserCommandProcessor> _commandProcessors = new List<IUserCommandProcessor>();
-
         private bool _exiting = false;
 
         private ServiceProvider _serviceProvider;
@@ -23,7 +21,7 @@ namespace BookStore.App.ConsoleApp
             _logger = serviceProvider.GetRequiredService<ILogger<Application>>();
         }
 
-        public void RegisterCommandProcessor<T>(string key)
+        public void RegisterCommandProcessor<T>(string key) where T : IUserCommandProcessor
         {
             _logger.LogInformation($"Registering command {key} with {typeof(T)}");
             _registeredProcessors.Add(key, typeof(T));
@@ -31,6 +29,8 @@ namespace BookStore.App.ConsoleApp
 
         public async void Run()
         {
+            PrintWelcomeMessage();
+
             while (!_exiting)
             {
                 Console.Write("> ");
@@ -45,9 +45,9 @@ namespace BookStore.App.ConsoleApp
                 }
                 else
                 {
-                    string commandKey = input.Split(" ")[0];
+                    string commandKey = input.Split(" ")[0].ToLower();
 
-                    using var scope = _serviceProvider.CreateScope();
+                    using IServiceScope scope = _serviceProvider.CreateScope();
                     {
                         IUserCommandProcessor userCommandProcesser = CreateProcessorFor(scope, commandKey);
 
@@ -93,11 +93,22 @@ namespace BookStore.App.ConsoleApp
 
         private void PrintCommandNotSupportedMessage(string commandKey)
         {
+            Console.WriteLine($"Unkown command '{commandKey}'");
+            PrintSupportedCommands();
+        }
+
+        private void PrintWelcomeMessage()
+        {
+            Console.WriteLine($"Welcome to the Book Store Console Application.");
+            PrintSupportedCommands();
+        }
+
+        private void PrintSupportedCommands()
+        {
             var supportedCommands = _registeredProcessors.Keys.ToList();
             supportedCommands.Add(EXIT_COMMAND);
             supportedCommands.Sort();
-
-            Console.WriteLine($"Unkown command '{commandKey}', supported commands are:\n{string.Join(", ", supportedCommands)}");
+            Console.WriteLine($"Supported commands are:\n{string.Join(", ", supportedCommands)}");
         }
     }
 }

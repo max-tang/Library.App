@@ -4,7 +4,11 @@ using BookStore.App.Books;
 
 namespace BookStore.App.ConsoleApp
 {
-    abstract class BaseUserCommandProcessor<T> : IUserCommandProcessor
+    /// <summary>
+    /// Base class for all command processors, provides facilities like parsing command body from JSON.
+    /// </summary>
+    /// <typeparam name="T">Type of expected command body.</typeparam>
+    abstract class BaseUserCommandProcessor<T> : IUserCommandProcessor where T : class
     {
         protected IBookService _bookService;
 
@@ -30,28 +34,25 @@ namespace BookStore.App.ConsoleApp
             CommandKey = commandKey;
         }
 
-        public async Task<bool> ProcessUserInput(string input)
+        public async Task ProcessUserInput(string input)
         {
             if (input.Length < CommandKey.Length)
             {
-                return false;
+                return;
             }
 
             if (input.Substring(0, CommandKey.Length).ToLower() == CommandKey)
             {
-                T command = ParseCommandBody(input.Length > CommandKey.Length ? input.Substring(CommandKey.Length) : "");
+                T command = ParseCommandBody(input.Length > CommandKey.Length ? input[CommandKey.Length..] : "");
                 if (command == null)
                 {
                     Console.WriteLine("Failed to parse command, usage:");
                     PrintUsage();
-                    return true;
+                    return;
                 }
 
                 await DoProcess(command);
-
-                return true;
             }
-            return false;
         }
 
         protected abstract Task DoProcess(T command);

@@ -3,13 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.App.Books
 {
-    public class BookContext : DbContext
+    public class BookDbContext : DbContext
     {
-        public BookContext()
+        public BookDbContext()
         {
         }
 
-        public BookContext(DbContextOptions<BookContext> options)
+        public BookDbContext(DbContextOptions<BookDbContext> options)
             : base(options)
         {
         }

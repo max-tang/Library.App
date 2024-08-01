@@ -1,9 +1,12 @@
 using System.Text.Json;
 using BookStore.App.Books;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace BookStore.App.ConsoleApp
 {
+    /// <summary>
+    /// Processor for command <c> add BOOK_JSON </c>.
+    /// Parses the BOOK_JSON body included in the command and create a new book with provided information.
+    /// </summary>
     class CreateBookCommandProcessor : BaseUserCommandProcessor<CreateBookCommand>
     {
         public const string COMMAND_KEY = "add";
@@ -14,7 +17,7 @@ namespace BookStore.App.ConsoleApp
 
         public override void PrintUsage()
         {
-            Console.WriteLine($"\t{COMMAND_KEY} JSON");
+            Console.WriteLine($"\t{COMMAND_KEY} BOOK_JSON");
             string exampleJson = JsonSerializer.Serialize(new CreateBookCommand()
             {
                 Isbn = "0-061-96436-0",
@@ -28,7 +31,8 @@ namespace BookStore.App.ConsoleApp
 
         protected override async Task DoProcess(CreateBookCommand command)
         {
-            await _bookService.AddAcync(command);
+            Book book = await _bookService.AddAcync(command);
+            Console.WriteLine($"Book with id {book.Id} saved.");
         }
     }
 }

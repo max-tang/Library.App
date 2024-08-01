@@ -4,6 +4,9 @@ using BookStore.App;
 
 namespace BookStore.App.Books
 {
+    /// <summary>
+    /// Represents a user request to create a new book.
+    /// </summary>
     public class CreateBookCommand
     {
         [Required]

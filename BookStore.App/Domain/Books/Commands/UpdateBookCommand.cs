@@ -3,6 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace BookStore.App.Books
 {
+    /// <summary>
+    /// Represents a user request to update an existing book in the system.
+    /// </summary>
     public class UpdateBookCommand
     {
         [Required]

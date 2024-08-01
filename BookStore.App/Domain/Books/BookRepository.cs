@@ -7,50 +7,50 @@ namespace BookStore.App.Books
 
     public class BookRepository : IBookRespository
     {
-        private readonly BookContext _bookContext;
+        private readonly BookDbContext _bookDbContext;
         private readonly ILogger<BookRepository> _logger;
 
-        public BookRepository(BookContext bookContext, ILogger<BookRepository> logger)
+        public BookRepository(BookDbContext bookDbContext, ILogger<BookRepository> logger)
         {
             _logger = logger;
-            _bookContext = bookContext;
+            _bookDbContext = bookDbContext;
         }
 
         public async Task<long> AddAsync(Book book)
         {
-            await _bookContext.Books.AddAsync(book);
-            await _bookContext.SaveChangesAsync();
+            await _bookDbContext.Books.AddAsync(book);
+            await _bookDbContext.SaveChangesAsync();
             return book.Id;
         }
 
         public async Task<IEnumerable<Book>> FindAllAsync()
         {
-            return await _bookContext.Books.ToListAsync();
+            return await _bookDbContext.Books.ToListAsync();
         }
 
         public async Task<Book> FindByIdAsync(long id)
         {
-            Book book = await _bookContext.Books.FindAsync(id);
+            Book book = await _bookDbContext.Books.FindAsync(id);
             return book;
         }
 
         public async Task RemoveAsync(Book book)
         {
-            Book existingBook = _bookContext.Books.Where(b => b.Id == book.Id).FirstOrDefault();
+            Book existingBook = _bookDbContext.Books.Where(b => b.Id == book.Id).FirstOrDefault();
             if (existingBook == null)
             {
                 throw new NotFoundException("Book not found.");
             }
 
-            _bookContext.Books.Remove(existingBook);
-            await _bookContext.SaveChangesAsync();
+            _bookDbContext.Books.Remove(existingBook);
+            await _bookDbContext.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Book bookToUpdate)
         {
             _logger.LogInformation($"Updating book with id: {bookToUpdate.Id}");
 
-            Book existingBook = _bookContext.Books.Where(b => b.Id == bookToUpdate.Id).FirstOrDefault();
+            Book existingBook = _bookDbContext.Books.Where(b => b.Id == bookToUpdate.Id).FirstOrDefault();
 
             if (existingBook == null)
             {
@@ -63,11 +63,11 @@ namespace BookStore.App.Books
             existingBook.Title = bookToUpdate.Title;
             existingBook.PublishDate = bookToUpdate.PublishDate;
 
-            _bookContext.Entry(existingBook).State = EntityState.Modified;
+            _bookDbContext.Entry(existingBook).State = EntityState.Modified;
 
             try
             {
-                await _bookContext.SaveChangesAsync();
+                await _bookDbContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -84,7 +84,7 @@ namespace BookStore.App.Books
 
         private bool BookIdExists(long id)
         {
-            return _bookContext.Books.Any(x => x.Id == id);
+            return _bookDbContext.Books.Any(x => x.Id == id);
         }
     }
 

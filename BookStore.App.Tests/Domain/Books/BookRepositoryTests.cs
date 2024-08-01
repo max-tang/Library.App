@@ -169,13 +169,13 @@ namespace BookStore.App.Books
             await Assert.ThrowsAsync<NotFoundException>(action);
         }
 
-        private BookContext CreateTestDbContext()
+        private BookDbContext CreateTestDbContext()
         {
-            var options = new DbContextOptionsBuilder<BookContext>()
+            var options = new DbContextOptionsBuilder<BookDbContext>()
                 .UseInMemoryDatabase("TestBookDb")
                 .Options;
 
-            var dbContext = new BookContext(options);
+            var dbContext = new BookDbContext(options);
             dbContext.Database.EnsureDeleted();
             return dbContext;
         }

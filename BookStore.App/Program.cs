@@ -19,7 +19,7 @@ static ServiceProvider CreateServices()
                 options.AddDebug();
             }
         )
-        .AddDbContext<BookContext>(
+        .AddDbContext<BookDbContext>(
             options => options.UseInMemoryDatabase("BookStoreDb")
         )
         .AddScoped<IBookRespository, BookRepository>()

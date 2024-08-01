@@ -3,6 +3,10 @@ using BookStore.App.Books;
 
 namespace BookStore.App.ConsoleApp
 {
+    /// <summary>
+    /// Command processor for command <c>update BOOK_JSON</c>.
+    /// Parses BOOK_JSON as a <c>UpdateBookCommand</c> object and update the related book in the store.
+    /// </summary>
     class UpdateBookCommandProcessor : BaseUserCommandProcessor<UpdateBookCommand>
     {
         public const string COMMAND_KEY = "update";
@@ -29,6 +33,7 @@ namespace BookStore.App.ConsoleApp
         protected override async Task DoProcess(UpdateBookCommand command)
         {
             await _bookService.UpdateAcync(command);
+            Console.WriteLine($"Book with id {command.Id} updated.");
         }
     }
 

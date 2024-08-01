@@ -2,6 +2,9 @@ using BookStore.App.Books;
 
 namespace BookStore.App.ConsoleApp
 {
+    /// <summary>
+    /// Processor for command <c>show BOOK_ID</c>.
+    /// </summary>
     class ShowBookCommandProcessor : BaseUserCommandProcessor<FindByIdQuery>
     {
         public const string COMMAND_KEY = "show";

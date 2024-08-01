@@ -2,6 +2,10 @@ using BookStore.App.Books;
 
 namespace BookStore.App.ConsoleApp
 {
+    /// <summary>
+    /// Processor for command <c>remove BOOK_ID</c>.
+    /// Removes the book with the provided BOOK_ID, or do nothing if no books with the provided BOOK_ID is found.
+    /// </summary>
     class RemoveBookCommandProcessor : BaseUserCommandProcessor<RemoveBookCommand>
     {
         public const string COMMAND_KEY = "remove";
@@ -12,7 +16,7 @@ namespace BookStore.App.ConsoleApp
 
         public override void PrintUsage()
         {
-            Console.WriteLine($"\t{COMMAND_KEY} id");
+            Console.WriteLine($"\t{COMMAND_KEY} BOOK_ID");
             Console.WriteLine($"example:\n\t{COMMAND_KEY} 1");
         }
 

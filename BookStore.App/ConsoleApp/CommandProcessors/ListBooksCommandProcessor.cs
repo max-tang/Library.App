@@ -2,6 +2,10 @@ using BookStore.App.Books;
 
 namespace BookStore.App.ConsoleApp
 {
+    /// <summary>
+    /// Command processor for command <c>list</c>, prints out all <c>Books</c>.
+    /// 
+    /// </summary>
     class ListBooksCommandProcessor : BaseUserCommandProcessor<FindBooksQuery>
     {
         private static readonly string LINE_SEPERATOR = new string('-', 72);
