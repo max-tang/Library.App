@@ -104,7 +104,7 @@ namespace Library.App.ConsoleApp
 
         private void PrintWelcomeMessage()
         {
-            Console.WriteLine($"Welcome to the Book Store Console Application.");
+            Console.WriteLine($"Welcome to the Library Console Application.");
             PrintSupportedCommands();
         }
 
