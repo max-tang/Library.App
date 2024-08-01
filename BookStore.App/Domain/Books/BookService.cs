@@ -58,22 +58,20 @@ namespace BookStore.App.Books
 
         public async Task<Book> UpdateAcync(UpdateBookCommand updateBookCommand)
         {
-            Book book = await _bookRespository.FindByIdAsync(updateBookCommand.Id);
-            if (book == null)
-            {
-                throw new NotFoundException("Requested book not found!");
-            }
-
             if (!IsbnValidator.IsValid(updateBookCommand.Isbn))
             {
                 throw new BadArgumentException("Invalid ISBN number");
             }
 
-            book.Author = updateBookCommand.Author;
-            book.Title = updateBookCommand.Title;
-            book.Description = updateBookCommand.Description;
-            book.Isbn = updateBookCommand.Isbn;
-            book.PublishDate = updateBookCommand.PublishDate;
+            Book book = new Book()
+            {
+                Id = updateBookCommand.Id,
+                Author = updateBookCommand.Author,
+                Title = updateBookCommand.Title,
+                Description = updateBookCommand.Description,
+                Isbn = updateBookCommand.Isbn,
+                PublishDate = updateBookCommand.PublishDate,
+            };
 
             await _bookRespository.UpdateAsync(book);
 

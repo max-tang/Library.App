@@ -47,15 +47,7 @@ namespace BookStore.App.ConsoleApp
                     return true;
                 }
 
-                try
-                {
-                    await DoProcess(command);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.StackTrace);
-                    Console.WriteLine($"Failed to process command: {input}");
-                }
+                await DoProcess(command);
 
                 return true;
             }

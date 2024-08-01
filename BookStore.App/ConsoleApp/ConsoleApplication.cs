@@ -46,28 +46,32 @@ namespace BookStore.App.ConsoleApp
                 else
                 {
                     string commandKey = input.Split(" ")[0];
-                    IUserCommandProcessor userCommandProcesser = CreateProcessorFor(commandKey);
 
-                    if (userCommandProcesser == null)
+                    using var scope = _serviceProvider.CreateScope();
                     {
-                        PrintCommandNotSupportedMessage(commandKey);
-                    }
-                    else
-                    {
-                        try
+                        IUserCommandProcessor userCommandProcesser = CreateProcessorFor(scope, commandKey);
+
+                        if (userCommandProcesser == null)
                         {
-                            await userCommandProcesser.ProcessUserInput(input);
+                            PrintCommandNotSupportedMessage(commandKey);
                         }
-                        catch (Exception e)
+                        else
                         {
-                            _logger.LogError(e, "Failed to process user command");
+                            try
+                            {
+                                await userCommandProcesser.ProcessUserInput(input);
+                            }
+                            catch (Exception e)
+                            {
+                                _logger.LogError(e, "Failed to process user command");
+                            }
                         }
                     }
                 }
             }
         }
 
-        private IUserCommandProcessor CreateProcessorFor(string key)
+        private IUserCommandProcessor CreateProcessorFor(IServiceScope scope, string key)
         {
             _logger.LogInformation($"Creating processor for {key}");
             if (_registeredProcessors.ContainsKey(key))
@@ -75,7 +79,7 @@ namespace BookStore.App.ConsoleApp
                 Type type = _registeredProcessors[key];
                 try
                 {
-                    IUserCommandProcessor userCommandProcessor = _serviceProvider.GetRequiredService(type) as IUserCommandProcessor;
+                    IUserCommandProcessor userCommandProcessor = scope.ServiceProvider.GetRequiredService(type) as IUserCommandProcessor;
                     _logger.LogInformation(userCommandProcessor.GetType() + "created");
                     return userCommandProcessor;
                 }

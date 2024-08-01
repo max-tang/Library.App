@@ -10,7 +10,7 @@ namespace BookStore.App.Books
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
 
-            List<Book> books = GetTestBooks();
+            List<Book> books = SharedTestData.GetTestBooks();
             mockBookRepository.Setup(r => r.FindAllAsync()).Returns(Task.FromResult(books.AsEnumerable()));
             BookService service = new(mockBookRepository.Object, mockLogger);
 
@@ -28,7 +28,7 @@ namespace BookStore.App.Books
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
 
-            Book book = GetTestBook();
+            Book book = SharedTestData.GetTestBookWithoutId();
             mockBookRepository.Setup(r => r.FindByIdAsync(It.IsAny<long>())).Returns(Task.FromResult(book));
             BookService service = new(mockBookRepository.Object, mockLogger);
 
@@ -67,7 +67,7 @@ namespace BookStore.App.Books
             mockBookRepository.Setup(r => r.AddAsync(It.IsAny<Book>())).Returns(Task.FromResult(nextBookId));
 
             BookService service = new(mockBookRepository.Object, mockLogger);
-            CreateBookCommand command = GetCreateBookCommand(GoodIsbn());
+            CreateBookCommand command = GetCreateBookCommand(SharedTestData.GoodIsbn());
 
             // Act
             var result = await service.AddAcync(command);
@@ -91,7 +91,7 @@ namespace BookStore.App.Books
             BookService service = new(mockBookRepository.Object, mockLogger);
 
             // Act
-            Func<Task> action = () => service.AddAcync(GetCreateBookCommand(BadIsbn()));
+            Func<Task> action = () => service.AddAcync(GetCreateBookCommand(SharedTestData.BadIsbn()));
 
             // Assert
             await Assert.ThrowsAsync<BadArgumentException>(action);
@@ -104,14 +104,14 @@ namespace BookStore.App.Books
             // Arrange
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
-            Book book = GetTestBook();
+            Book book = SharedTestData.GetTestBookWithoutId();
 
             mockBookRepository.Setup(r => r.AddAsync(It.IsAny<Book>())).Throws(() => new ApplicationException("Some error"));
 
             BookService service = new(mockBookRepository.Object, mockLogger);
 
             // Act
-            Func<Task> action = () => service.AddAcync(GetCreateBookCommand(GoodIsbn()));
+            Func<Task> action = () => service.AddAcync(GetCreateBookCommand(SharedTestData.GoodIsbn()));
 
             // Assert
             await Assert.ThrowsAsync<ApplicationException>(action);
@@ -123,14 +123,11 @@ namespace BookStore.App.Books
             // Arrange
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
-            Book book = GetTestBook();
-
-            mockBookRepository.Setup(r => r.FindByIdAsync(It.IsAny<long>())).Returns(Task.FromResult(book));
-            mockBookRepository.Setup(r => r.UpdateAsync(It.IsAny<Book>())).Returns(Task.FromResult(book.Id));
-
+            Book book = SharedTestData.GetTestBookWithoutId();
+            UpdateBookCommand command = GetUpdateBookCommand(SharedTestData.AnotherGoodIsbn());
+            book.Id = command.Id;
+            mockBookRepository.Setup(r => r.UpdateAsync(It.IsAny<Book>())).Returns(Task.FromResult(true));
             BookService service = new(mockBookRepository.Object, mockLogger);
-
-            UpdateBookCommand command = GetUpdateBookCommand(AnotherGoodIsbn());
 
             // Act
             var result = await service.UpdateAcync(command);
@@ -150,20 +147,20 @@ namespace BookStore.App.Books
             // Arrange
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
-            Book book = GetTestBook();
+            Book book = SharedTestData.GetTestBookWithoutId();
 
-            mockBookRepository.Setup(r => r.FindByIdAsync(It.IsAny<long>())).Returns(Task.FromResult<Book>(null));
+            mockBookRepository.Setup(r => r.UpdateAsync(It.IsAny<Book>())).Throws(() => new NotFoundException("Requested book not found"));
 
             BookService service = new(mockBookRepository.Object, mockLogger);
 
-            UpdateBookCommand command = GetUpdateBookCommand(AnotherGoodIsbn());
+            UpdateBookCommand command = GetUpdateBookCommand(SharedTestData.AnotherGoodIsbn());
 
             // Act
             Func<Task> action = () => service.UpdateAcync(command);
 
             // Assert
             await Assert.ThrowsAsync<NotFoundException>(action);
-            mockBookRepository.Verify(r => r.UpdateAsync(It.IsAny<Book>()), Times.Never);
+            mockBookRepository.Verify(r => r.UpdateAsync(It.IsAny<Book>()), Times.Once);
         }
 
         [Fact]
@@ -172,13 +169,14 @@ namespace BookStore.App.Books
             // Arrange
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
-            Book book = GetTestBook();
+            Book book = SharedTestData.GetTestBookWithoutId();
+            book.Id = 1;
 
             mockBookRepository.Setup(r => r.FindByIdAsync(It.IsAny<long>())).Returns(Task.FromResult(book));
 
             BookService service = new(mockBookRepository.Object, mockLogger);
 
-            UpdateBookCommand command = GetUpdateBookCommand(BadIsbn());
+            UpdateBookCommand command = GetUpdateBookCommand(SharedTestData.BadIsbn());
 
             // Act
             Func<Task> action = () => service.UpdateAcync(command);
@@ -194,14 +192,14 @@ namespace BookStore.App.Books
             // Arrange
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
-            Book book = GetTestBook();
+            Book book = SharedTestData.GetTestBookWithoutId();
 
             mockBookRepository.Setup(r => r.FindByIdAsync(It.IsAny<long>())).Returns(Task.FromResult(book));
             mockBookRepository.Setup(r => r.UpdateAsync(It.IsAny<Book>())).Throws(() => new ApplicationException());
 
             BookService service = new(mockBookRepository.Object, mockLogger);
 
-            UpdateBookCommand command = GetUpdateBookCommand(GoodIsbn());
+            UpdateBookCommand command = GetUpdateBookCommand(SharedTestData.GoodIsbn());
 
             // Act
             Func<Task> action = () => service.UpdateAcync(command);
@@ -217,7 +215,7 @@ namespace BookStore.App.Books
             // Arrange
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
-            Book book = GetTestBook();
+            Book book = SharedTestData.GetTestBookWithoutId();
 
             mockBookRepository.Setup(r => r.FindByIdAsync(It.IsAny<long>())).Returns(Task.FromResult(book));
             mockBookRepository.Setup(r => r.RemoveAsync(It.IsAny<Book>())).Returns(Task.FromResult(false));
@@ -238,7 +236,7 @@ namespace BookStore.App.Books
             // Arrange
             var mockBookRepository = new Mock<IBookRespository>();
             var mockLogger = Mock.Of<ILogger<BookService>>();
-            Book book = GetTestBook();
+            Book book = SharedTestData.GetTestBookWithoutId();
 
             mockBookRepository.Setup(r => r.FindByIdAsync(It.IsAny<long>())).Returns(Task.FromResult<Book>(null));
 
@@ -271,41 +269,5 @@ namespace BookStore.App.Books
             PublishDate = new(),
             Isbn = isbn,
         };
-
-        private List<Book> GetTestBooks()
-        {
-            return new List<Book> {
-                new() {
-                    Id = 1,
-                    Title = "Book One",
-                    Author = "John Doe",
-                    Isbn = GoodIsbn(),
-                    Description = "",
-                    PublishDate = new()
-                },
-                new() {
-                    Id = 2,
-                    Title = "Book Two",
-                    Author = "John Doe",
-                    Isbn = AnotherGoodIsbn(),
-                    Description = "",
-                    PublishDate = new()
-                }
-            };
-        }
-
-        private Book GetTestBook() => new()
-        {
-            Id = 3,
-            Title = "Book",
-            Author = "John Doe",
-            Description = "book info",
-            PublishDate = new(),
-            Isbn = GoodIsbn(),
-        };
-
-        private string GoodIsbn() => "0-061-96436-0";
-        private string AnotherGoodIsbn() => "978-3-16-148410-0";
-        private string BadIsbn() => "NOT-VALID-ONE";
     }
 }

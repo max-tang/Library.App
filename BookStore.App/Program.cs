@@ -13,7 +13,6 @@ application.Run();
 static ServiceProvider CreateServices()
 {
     return new ServiceCollection()
-
         .AddLogging(options =>
             {
                 options.ClearProviders();

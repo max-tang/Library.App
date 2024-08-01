@@ -36,14 +36,34 @@ namespace BookStore.App.Books
 
         public async Task RemoveAsync(Book book)
         {
-            _bookContext.Books.Remove(book);
+            Book existingBook = _bookContext.Books.Where(b => b.Id == book.Id).FirstOrDefault();
+            if (existingBook == null)
+            {
+                throw new NotFoundException("Book not found.");
+            }
+
+            _bookContext.Books.Remove(existingBook);
             await _bookContext.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Book book)
+        public async Task UpdateAsync(Book bookToUpdate)
         {
-            _logger.LogInformation($"Updating book with id: {book.Id}");
-            _bookContext.Entry(book).State = EntityState.Modified;
+            _logger.LogInformation($"Updating book with id: {bookToUpdate.Id}");
+
+            Book existingBook = _bookContext.Books.Where(b => b.Id == bookToUpdate.Id).FirstOrDefault();
+
+            if (existingBook == null)
+            {
+                throw new NotFoundException("Book not found.");
+            }
+
+            existingBook.Author = bookToUpdate.Author;
+            existingBook.Description = bookToUpdate.Description;
+            existingBook.Isbn = bookToUpdate.Isbn;
+            existingBook.Title = bookToUpdate.Title;
+            existingBook.PublishDate = bookToUpdate.PublishDate;
+
+            _bookContext.Entry(existingBook).State = EntityState.Modified;
 
             try
             {
@@ -51,9 +71,9 @@ namespace BookStore.App.Books
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BookIdExists(book.Id))
+                if (!BookIdExists(bookToUpdate.Id))
                 {
-                    throw new NotFoundException("Todo item not found.");
+                    throw new NotFoundException("Book not found.");
                 }
                 else
                 {
