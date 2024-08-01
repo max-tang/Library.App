@@ -67,9 +67,3 @@ To support the extension of user commands, a Dynamic Factory pattern is applied.
 This pattern applies well here. If we need to add a new Command processor in the future, all we need to do is to implement the `IUserCommandProcessor` interface, or create a subclass of `BaseUserCommandProcessor`, and register it to the Dependency Injection Container and the `Application` instance. This aligns well with the Open/Closed Principle.
 
 I also tried the Chain of Responsiblity pattern at first. Basically, let the `Application` class hold a list of `IUserCommandProcessor`, and when a new user input comes, the `Application` instance asks each of these `IUserCommandProcessor` implementors if they can handle the command, until one that can handle it is found. There are two drawbacks for this approach though. Firstly, it is not very efficient when the number of supported commands grows very large. Secondly, and more importantly, we have to create all these `IUserCommandProcessor` ahead of time. Given that these command processors all depends on our `IBookService`, which we registered as `Scoped` in the DI container. It will break our designed lifetime of `IBookService`, which causes higher chance of Database concurrency issues.
-
-# TODO
-
-1. ISBN validation
-2. documentation
-3. Unit Testing
