@@ -2,11 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch (BookStore.App)",
+      "name": "Launch (Library.App)",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceRoot}/BookStore.App/bin/Debug/net6.0/BookStore.App.dll",
+      "program": "${workspaceRoot}/Library.App/bin/Debug/net6.0/Library.App.dll",
       "args": [],
       "cwd": "${workspaceRoot}",
       "externalConsole": false,

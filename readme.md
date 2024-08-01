@@ -11,7 +11,7 @@ dotnet test
 # Run the Console application
 
 ```sh
-dotnet run --project BookStore.App
+dotnet run --project Library.App
 ```
 
 # Example commands within the Console application
@@ -40,12 +40,12 @@ REMOVE 1
 
 # Project structure
 
-The BookStore.App has 2 main top level folders holding 2 subsystems. The `Domain` folder contains business logic, while `ConsoleApp` folder contains the presentation layer of the Application.
+The Library.App has 2 main top level folders holding 2 subsystems. The `Domain` folder contains business logic, while `ConsoleApp` folder contains the presentation layer of the Application.
 
 Instead of a layered structure, the `Domain` folder is designed to use a vertical slice pattern. Code components related to a business feature are grouped together, so that changes to one feature will have minimal impact to ohter features.
 
 ```
--------BookStore.App
+-------Library.App
         |
         |___ Domain
         |    |
