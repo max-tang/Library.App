@@ -1,6 +1,12 @@
 # Prerequests for building and running the application locally
 
-1. .NET Core 6.0 installed
+1. .NET 6 installed
+
+# Build the Application and tests
+
+```sh
+dotnet build
+```
 
 # Run the tests
 
@@ -42,7 +48,7 @@ REMOVE 1
 
 The Library.App has 2 main top level folders holding 2 subsystems. The `Domain` folder contains business logic, while `ConsoleApp` folder contains the presentation layer of the Application.
 
-Instead of a layered structure, the `Domain` folder is designed to use a vertical slice pattern. Code components related to a business feature are grouped together, so that changes to one feature will have minimal impact to ohter features.
+Instead of a layered structure, the `Domain` folder is designed to use a vertical slice pattern. Code components related to a business feature are grouped together, so that changes to one feature will have minimal impact on ohter features.
 
 ```
 -------Library.App
