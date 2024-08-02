@@ -65,11 +65,18 @@ Instead of a layered structure, the `Domain` folder is designed to use a vertica
 
 ## Service registration and creation
 
-Services are regiestered and created using .NET core's dependency injection container.
+Services are regiestered and created using .NET core's dependency injection container. More specifically, in this small project, we need to inject `IBookService` for our `IUserCommandProcessor` instances. DI container to manage all of them. As the underlying `DBContext` is designed to be short lived, services depending on it should not out-live the scope of `DBContext`. We create a `IServiceScope` instance for each user command, and create our services in the scope.
+
+## Using contract classes (Data Transfer Object)
+
+Under folder `Domain/Books/Commands` and `Domain/Books/Queries`, a few classes forms the contracts we provide to the other layers of the application. This has the benefit of allowing internal implementation involution without breaking users of the business logic layer.
 
 ## More details about the presentation layer
 
 To support the extension of user commands, a Dynamic Factory pattern is applied. The `Application` class has a `Dictionary _registeredProcessors` field, holding all currently regiestered CommandProcessors. At run time, the `Application` instance uses this information to create required Command processors at run time, based on user input.
 This pattern applies well here. If we need to add a new Command processor in the future, all we need to do is to implement the `IUserCommandProcessor` interface, or create a subclass of `BaseUserCommandProcessor`, and register it to the Dependency Injection Container and the `Application` instance. This aligns well with the Open/Closed Principle.
 
-I also considered the Chain of Responsiblity pattern at first. Basically, let the `Application` class hold a list of `IUserCommandProcessor`, and when a new user input comes, the `Application` instance asks each of these `IUserCommandProcessor` implementors if they can handle the command, until one that can handle it is found. There are two drawbacks for this approach though. Firstly, it is not very efficient when the number of supported commands grows very large. Secondly, and more importantly, we have to create all these `IUserCommandProcessor` ahead of time. Given that these command processors all depend on our `IBookService` and in turn depends on `IBookRepository`, which we registered as `Scoped` in the DI container. If we hold these instances in `Application` instance, our `IBookService` and `IBookRepository` instances will live much longer then their designed lifetime, that causes higher chance of getting Database concurrency issues.
+I also considered the Chain of Responsiblity pattern. Basically, let the `Application` class hold a list of `IUserCommandProcessor`, and when a new user input comes, the `Application` instance asks each of these `IUserCommandProcessor` implementors if they can handle the command, until one that can handle it is found. There are two drawbacks for this approach though.
+
+1. It is not very efficient when the number of supported commands grows very large.
+2. More importantly, we have to create all these `IUserCommandProcessor` ahead of time. Given that these command processors all depend on our `IBookService` and in turn depends on `IBookRepository`, which we registered as `Scoped` in the DI container. If we hold these instances in `Application` instance, our `IBookService` and `IBookRepository` instances will out-live their designed lifetime, that causes higher chance of getting Database concurrency issues.
